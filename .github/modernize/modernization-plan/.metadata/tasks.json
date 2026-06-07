@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Tasks template for modernization plan. Generate this file alongside plan.md to track individual migration tasks.",
+  "tasks": [
+    {
+      "type": "upgrade",
+      "id": "001-upgrade-dotnet-to-net10",
+      "description": "Upgrade the application runtime to the latest .NET LTS so the modernization can use current Azure platform capabilities.",
+      "reason": "Current target .NET Framework 4.7.2 is out of mainstream support and blocks modern cloud-native modernization.",
+      "requirements": "Upgrade the application from .NET Framework 4.7.2 to .NET 10 and convert to an SDK-style project while preserving existing functional behavior.",
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "002-transform-windows-auth-to-entra-id",
+      "description": "Replace Windows authentication with Microsoft Entra ID for Azure-compatible application authentication. Addresses issues: Windows authentication detected.",
+      "reason": "Windows authentication is not supported for the assessed Azure targets and is a mandatory modernization blocker.",
+      "requirements": "Migrate application authentication and authorization from Windows authentication to Microsoft Entra ID with app-role/group-based access for reporting operators.",
+      "dependencies": [
+        "001-upgrade-dotnet-to-net10"
+      ],
+      "skills": [
+        {
+          "name": "migration-microsoft-entra-id",
+          "location": "builtin"
+        }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "003-transform-inproc-session-to-redis",
+      "description": "Move in-process ASP.NET session state to Azure Cache for Redis to support scale-out hosting. Addresses issues: Session state stored in-proc or in local process is detected.",
+      "reason": "In-proc session state is a cloud scale risk and prevents reliable horizontal scaling.",
+      "requirements": "Externalize session state from in-process storage to Azure Cache for Redis and preserve existing session-driven user workflows.",
+      "dependencies": [
+        "001-upgrade-dotnet-to-net10"
+      ],
+      "skills": [
+        {
+          "name": "migration-azure-redis-cache",
+          "location": "builtin"
+        }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "transform",
+      "id": "004-transform-connection-secrets-to-managed-identity",
+      "description": "Remove embedded credential-style connection settings and use managed identity with secure configuration sources. Addresses issues: Connection strings without configuration builders detected.",
+      "reason": "Hard-coded credential-style configuration is a security risk and does not meet cloud security best practices.",
+      "requirements": "Replace local credential-style configuration with managed identity and Azure Key Vault-backed secrets/configuration while preserving required reporting configuration values.",
+      "dependencies": [
+        "001-upgrade-dotnet-to-net10"
+      ],
+      "skills": [
+        {
+          "name": "migration-managed-identity",
+          "location": "builtin"
+        },
+        {
+          "name": "migration-azure-keyvault-secret",
+          "location": "builtin"
+        }
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "infrastructure",
+      "id": "005-infrastructure-generate-bicep",
+      "description": "Generate Bicep Infrastructure as Code for the target Azure resources required by the modernization solutions.",
+      "reason": "The plan requires IaC preparation for each modernization solution while deferring actual resource provisioning.",
+      "requirements": "Generate Bicep templates for Azure Container Apps hosting, managed identity, Azure Cache for Redis, Azure Key Vault, and observability resources; do not provision resources.",
+      "dependencies": [
+        "002-transform-windows-auth-to-entra-id",
+        "003-transform-inproc-session-to-redis",
+        "004-transform-connection-secrets-to-managed-identity"
+      ],
+      "iacType": "bicep",
+      "provision": false,
+      "skills": [
+        {
+          "name": "infrastructure-bicep-generation",
+          "location": "builtin"
+        }
+      ]
+    },
+    {
+      "type": "security",
+      "id": "006-security-cve-remediation",
+      "description": "Scan and remediate known dependency CVEs before deployment.",
+      "reason": "Security remediation is required in every modernization plan to reduce known vulnerability risk.",
+      "requirements": "Scan project dependencies for CVEs, upgrade vulnerable packages to minimum patched versions, document major-version upgrade risks if required, and verify build/test status after remediation.",
+      "dependencies": [
+        "002-transform-windows-auth-to-entra-id",
+        "003-transform-inproc-session-to-redis",
+        "004-transform-connection-secrets-to-managed-identity"
+      ],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      }
+    },
+    {
+      "type": "deployment",
+      "id": "007-deployment-azure-container-apps",
+      "description": "Deploy the modernized application to Azure Container Apps using generated IaC artifacts and deployment automation.",
+      "reason": "A deployment task is required to complete migration readiness after code and infrastructure artifacts are prepared.",
+      "requirements": "Package and deploy the modernized application to Azure Container Apps using generated Bicep IaC, managed identity authentication, and secure runtime configuration.",
+      "dependencies": [
+        "005-infrastructure-generate-bicep",
+        "006-security-cve-remediation"
+      ],
+      "targetAzureService": "Azure Container Apps",
+      "resourceStatus": "will create new service",
+      "deploymentTool": "bicep",
+      "skills": [
+        {
+          "name": "azcli-containerapp-deploy",
+          "location": "builtin"
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "planName": "modernization-plan",
+    "projectName": "Reporting.Legacy.Web",
+    "language": "dotnet",
+    "createdAt": "2026-06-07T22:44:56Z",
+    "version": "1.0"
+  }
+}
