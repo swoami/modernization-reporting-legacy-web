@@ -1,0 +1,257 @@
+{
+  "version": "1.0.0",
+  "producer": ".NET AppCAT CLI",
+  "metadata": {
+    "analysisStartTime": "2026-06-07T21:45:37.1438079Z",
+    "analysisEndTime": "2026-06-07T21:45:38.0745514Z",
+    "privacyMode": "Restricted",
+    "privacyModeHelpUrl": "https://go.microsoft.com/fwlink/?linkid=2271074",
+    "targetIds": [
+      "AppService.Windows",
+      "AppService.Linux",
+      "AKS.Linux",
+      "AKS.Windows",
+      "ACA",
+      "AppServiceContainer.Linux",
+      "AppServiceContainer.Windows",
+      "AppServiceManagedInstance.Windows"
+    ],
+    "targetDisplayNames": [
+      "Azure App Service",
+      "Azure Kubernetes Service",
+      "Azure Container Apps",
+      "Azure App Service Container",
+      "Azure App Service Managed Instance"
+    ],
+    "os": [
+      "windows",
+      "linux"
+    ]
+  },
+  "summary": {
+    "totalProjects": 1,
+    "totalIssues": 3,
+    "totalIncidents": 3,
+    "totalEffort": 9,
+    "charts": {
+      "severity": {
+        "mandatory": 1,
+        "optional": 1,
+        "potential": 1,
+        "information": 0
+      },
+      "category": {
+        "Identity": 1,
+        "Scale": 1,
+        "Security": 1
+      }
+    }
+  },
+  "projects": [
+    {
+      "path": "Reporting.Legacy.Web.csproj",
+      "issues": 3,
+      "storyPoints": 9,
+      "properties": {
+        "appName": "Reporting.Legacy.Web",
+        "frameworks": [
+          ".NETFramework,Version=v4.7.2"
+        ],
+        "languages": [
+          "C#"
+        ],
+        "tools": [
+          "MSBuild"
+        ]
+      },
+      "incidents": [
+        {
+          "ruleId": "Identity.0002",
+          "incidentId": "c714ad68-e46d-416b-8850-321b809e3e82",
+          "location": "Web.config",
+          "locationKind": "File",
+          "targets": {
+            "AppService.Windows": {
+              "severity": "mandatory",
+              "effort": 3
+            },
+            "AppService.Linux": {
+              "severity": "mandatory",
+              "effort": 3
+            },
+            "AKS.Linux": {
+              "severity": "mandatory",
+              "effort": 3
+            },
+            "AKS.Windows": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "ACA": {
+              "severity": "mandatory",
+              "effort": 3
+            },
+            "AppServiceContainer.Linux": {
+              "severity": "mandatory",
+              "effort": 3
+            },
+            "AppServiceContainer.Windows": {
+              "severity": "mandatory",
+              "effort": 3
+            },
+            "AppServiceManagedInstance.Windows": {
+              "severity": "mandatory",
+              "effort": 3
+            }
+          },
+          "labels": []
+        },
+        {
+          "ruleId": "Scale.0002",
+          "incidentId": "7e797456-d4bc-4fb9-8680-91006d70ffef",
+          "location": "Web.config",
+          "locationKind": "File",
+          "targets": {
+            "AppService.Windows": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "AppService.Linux": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "AKS.Linux": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "AKS.Windows": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "ACA": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "AppServiceContainer.Linux": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "AppServiceContainer.Windows": {
+              "severity": "potential",
+              "effort": 3
+            },
+            "AppServiceManagedInstance.Windows": {
+              "severity": "potential",
+              "effort": 3
+            }
+          },
+          "labels": []
+        },
+        {
+          "ruleId": "Security.0002",
+          "incidentId": "73b4d643-9f97-4060-a9e3-fae844f99de3",
+          "location": "Web.config",
+          "locationKind": "File",
+          "targets": {
+            "AppService.Windows": {
+              "severity": "optional",
+              "effort": 3
+            },
+            "AppService.Linux": {
+              "severity": "optional",
+              "effort": 3
+            },
+            "AKS.Linux": {
+              "severity": "optional",
+              "effort": 3
+            },
+            "AKS.Windows": {
+              "severity": "optional",
+              "effort": 3
+            },
+            "ACA": {
+              "severity": "optional",
+              "effort": 3
+            },
+            "AppServiceContainer.Linux": {
+              "severity": "optional",
+              "effort": 3
+            },
+            "AppServiceContainer.Windows": {
+              "severity": "optional",
+              "effort": 3
+            },
+            "AppServiceManagedInstance.Windows": {
+              "severity": "optional",
+              "effort": 3
+            }
+          },
+          "labels": []
+        }
+      ]
+    }
+  ],
+  "rules": {
+    "Identity.0002": {
+      "id": "Identity.0002",
+      "description": "Your app is using windows authentication which is not supported on Azure App Service, Azure Container Apps and Azure Kubernetes Service.\n\nAzure App Service provides built-in authentication and authorization capabilities, so you can sign in users and access data by writing minimal or no code in your web app.\n\nFollow the link below for more information.\u0022",
+      "title": "Windows authentication detected",
+      "severity": "mandatory",
+      "effort": 3,
+      "links": [
+        {
+          "url": "https://go.microsoft.com/fwlink/?LinkID=2242883"
+        }
+      ],
+      "labels": []
+    },
+    "Scale.0002": {
+      "id": "Scale.0002",
+      "description": "Session state stored in-proc or in local process is detected.\n\nIf you are targeting Managed Instance on Azure App Service, move session to Azure Cache for Redis or Cosmos DB. In-proc session impedes scale-out; Managed Instance does not change session semantics.\n\nWhile if targeting other Azure compute services:\n\nIn-proc or local process stored session state not immediately prevents an application from working in Azure, however, is not recommended because it would make scaling the Azure App Service or Azure Kubernetes Service more difficult.\n\nAzure provides multiple ways to store session state in a scalable way using Azure Cache for Redis, Azure Cosmos DB or other services.",
+      "title": "Session state stored in-proc or in local process is detected",
+      "severity": "potential",
+      "effort": 3,
+      "links": [
+        {
+          "title": "ASP.NET Session State Provider for Azure Cache for Redis",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2250855"
+        },
+        {
+          "title": "Use Azure Cosmos DB as an ASP.NET session state and caching provider",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2250757"
+        },
+        {
+          "title": "Azure Cosmos DB: autoscale, session state, monitoring, and more",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2250758"
+        },
+        {
+          "title": "Design to scale out",
+          "url": "https://go.microsoft.com/fwlink/?linkid=2251007"
+        }
+      ],
+      "labels": []
+    },
+    "Security.0002": {
+      "id": "Security.0002",
+      "description": "Connection strings without configuration builders detected.  \n\n Keeping connection strings directly in the app is not the best practice and might introduce security risks, increased maintenance, scalability challenges or compliance standards (such as PCI DSS, GDPR, etc.). \n\n Instead, it is recommended to use configuration builders to get secrets from secure sources in Azure environment.",
+      "title": "Connection strings without configuration builders detected",
+      "severity": "optional",
+      "effort": 3,
+      "links": [
+        {
+          "title": "Configuration builders",
+          "url": "https://go.microsoft.com/fwlink/?LinkID=2250915"
+        },
+        {
+          "title": "Storing application secrets",
+          "url": "https://go.microsoft.com/fwlink/?LinkID=2250916"
+        },
+        {
+          "title": "Centralized app configuration and security",
+          "url": "https://go.microsoft.com/fwlink/?LinkID=2250733"
+        }
+      ],
+      "labels": []
+    }
+  }
+}
