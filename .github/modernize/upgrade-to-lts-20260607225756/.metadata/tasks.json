@@ -1,0 +1,27 @@
+{
+  "$schema": "tasks-schema.json",
+  "description": ".NET version upgrade plan from .NET Framework 4.7.2 to .NET 10.0",
+  "tasks": [
+    {
+      "type": "upgrade",
+      "id": "001-upgrade-dotnet-to-net10",
+      "description": "Upgrade Reporting.Legacy.Web from .NET Framework 4.7.2 to .NET 10.0",
+      "reason": "The user explicitly requested an upgrade to the latest LTS version. .NET Framework 4.7.2 is a legacy platform with no new feature investment, and migrating to .NET 10.0 LTS ensures long-term support, access to modern APIs, performance improvements, and full compatibility with the Azure SDK (netstandard2.0 / Azure.* packages).",
+      "requirements": "Upgrade the Reporting.Legacy.Web project from .NET Framework 4.7.2 to .NET 10.0, including: converting the non-SDK-style project file to SDK-style format, updating the target framework moniker to net10.0, migrating packages.config to PackageReference with net10.0-compatible package versions, addressing System.Web and ASP.NET Web Forms/ASMX breaking changes by migrating to ASP.NET Core equivalents, and migrating Web.config settings to the ASP.NET Core configuration system.",
+      "skills": [],
+      "successCriteria": {
+        "passBuild": "true",
+        "generateNewUnitTests": "false",
+        "passUnitTests": "true"
+      },
+      "status": "pending"
+    }
+  ],
+  "metadata": {
+    "planName": "upgrade-to-lts",
+    "projectName": "Reporting.Legacy.Web",
+    "language": "dotnet",
+    "createdAt": "2026-06-08T00:58:01.315Z",
+    "version": "1.0"
+  }
+}
