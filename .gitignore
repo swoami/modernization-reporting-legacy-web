@@ -1,0 +1,12 @@
+bin/
+obj/
+.vs/
+.vscode/
+TestResults/
+.playwright-cli/
+output/
+*.user
+*.suo
+*.cache
+*.log
+packages/
