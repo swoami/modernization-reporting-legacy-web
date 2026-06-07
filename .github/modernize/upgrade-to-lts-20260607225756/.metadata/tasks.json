@@ -14,7 +14,13 @@
         "generateNewUnitTests": "false",
         "passUnitTests": "true"
       },
-      "status": "pending"
+      "status": "success",
+      "taskSummary": "Upgraded the project to .NET 10 SDK-style ASP.NET Core, migrated legacy Web Forms/ASMX surfaces to route-compatible controllers, moved configuration to appsettings/options, and validated build/test successfully.",
+      "successCriteriaStatus": {
+        "passBuild": "true",
+        "generateNewUnitTests": "true",
+        "passUnitTests": "true"
+      }
     }
   ],
   "metadata": {
